@@ -1,0 +1,27 @@
+{
+  "name": "@dojo-exam/session-lifecycle",
+  "version": "0.1.0",
+  "description": "Session lifecycle management library - enforces deterministic state transitions",
+  "main": "src/index.js",
+  "bin": {
+    "session-lifecycle": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:contract": "vitest run --dir tests/contract"
+  },
+  "keywords": ["session", "lifecycle", "state-machine", "exam"],
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}

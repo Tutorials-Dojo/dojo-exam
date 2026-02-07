@@ -1,0 +1,26 @@
+{
+  "name": "@dojo-exam/session-identity",
+  "version": "0.1.0",
+  "description": "Session identity validation library - validates explicit identity presence",
+  "main": "src/index.js",
+  "bin": {
+    "session-identity": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:contract": "vitest run --dir tests/contract"
+  },
+  "keywords": ["session", "identity", "validation", "exam"],
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}
