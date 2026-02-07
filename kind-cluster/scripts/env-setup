@@ -55,12 +55,12 @@ metadata:
 servers: 1
 agents: $NUM_WORKERS
 ports:
-  - port: "$API_PORT:6443"
+  - port: "6443:6443"
     nodeFilters:
       - loadbalancer
 kubeAPI:
-  host: "127.0.0.1"
-  hostPort: "$API_PORT"
+  host: "0.0.0.0"
+  hostPort: "6443"
 options:
   k3s:
     extraArgs:
@@ -109,7 +109,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') | Docker and KIND environment is ready for us
 
 # Save kubeconfig and set API server address
 cp /home/candidate/.kube/config /home/candidate/.kube/kubeconfig
-sed -i 's|server: https://127\.0\.0\.1:\([0-9]*\)|server: https://k8s-api-server:\1|' /home/candidate/.kube/kubeconfig
+sed -i 's|server: https://[^:]*:\([0-9]*\)|server: https://k8s-api-server:\1|' /home/candidate/.kube/kubeconfig
 
 export KUBECONFIG=/home/candidate/.kube/kubeconfig
 

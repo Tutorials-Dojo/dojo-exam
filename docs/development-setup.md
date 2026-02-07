@@ -5,12 +5,14 @@ This document provides step-by-step instructions for setting up and running the 
 ## Prerequisites
 
 ### System Requirements
+
 - **Operating System**: Linux, macOS, or Windows 10/11 with WSL2
 - **CPU**: 4+ cores recommended (minimum 2 cores)
 - **RAM**: 8GB minimum, 16GB recommended
 - **Storage**: 20GB free space
 
 ### Required Software
+
 - **Docker**: v20.10.0 or newer
 - **Docker Compose**: v2.0.0 or newer
 
@@ -40,7 +42,7 @@ Review the `compose.yaml` file to understand the service configuration. Key serv
 
 ```bash
 # Build and start all services
-docker-compose up --build
+
 ```
 
 This command will build and start all the services defined in the compose.yaml file.
@@ -83,8 +85,8 @@ remote-desktop:
   image: nishanb/ck-x-simulator-remote-desktop:latest
   hostname: terminal
   expose:
-    - "5901"  # VNC port (internal only)
-    - "6901"  # Web VNC port (internal only)
+    - '5901' # VNC port (internal only)
+    - '6901' # Web VNC port (internal only)
   environment:
     - VNC_PW=bakku-the-wizard
     - VNC_PASSWORD=bakku-the-wizard
@@ -101,7 +103,7 @@ The remote desktop provides a graphical interface for the exam environment.
 webapp:
   image: nishanb/ck-x-simulator-webapp:latest
   expose:
-    - "3000"  # Only exposed to internal network
+    - '3000' # Only exposed to internal network
   environment:
     - VNC_SERVICE_HOST=remote-desktop
     - VNC_SERVICE_PORT=6901
@@ -121,7 +123,7 @@ The web application serves as the frontend interface for the simulator.
 nginx:
   image: nishanb/ck-x-simulator-nginx:latest
   ports:
-    - "30080:80"  # Expose Nginx on port 30080
+    - '30080:80' # Expose Nginx on port 30080
 ```
 
 Nginx is the only service directly exposed to users and handles routing to internal services.
@@ -134,12 +136,12 @@ k8s-api-server:
   image: nishanb/ck-x-simulator-cluster:latest
   container_name: kind-cluster
   hostname: k8s-api-server
-  privileged: true  # Required for running containers inside KIND
+  privileged: true # Required for running containers inside KIND
   expose:
-    - "6443:6443" 
-    - "22"
+    - '6443:6443'
+    - '22'
   volumes:
-    - kube-config:/home/candidate/.kube  # Shared volume for Kubernetes config
+    - kube-config:/home/candidate/.kube # Shared volume for Kubernetes config
 ```
 
 The Kubernetes cluster runs in a KIND container with shared kube-config volume.
@@ -152,9 +154,9 @@ facilitator:
   image: nishanb/ck-x-simulator-facilitator:latest
   hostname: facilitator
   expose:
-    - "3000"
+    - '3000'
   ports:
-    - "3001:3000"
+    - '3001:3000'
   environment:
     - PORT=3000
     - NODE_ENV=prod
@@ -243,8 +245,8 @@ If your system cannot handle the resource requirements, adjust the limits in com
 deploy:
   resources:
     limits:
-      cpus: '1'  # Reduce CPU allocation
-      memory: 1G  # Reduce memory allocation
+      cpus: '1' # Reduce CPU allocation
+      memory: 1G # Reduce memory allocation
 ```
 
 ## Network Architecture
@@ -266,8 +268,8 @@ The system uses persistent volumes for:
 
 ```yaml
 volumes:
-  kube-config:  # Shared volume for Kubernetes configuration
-  redis-data:   # Persistent volume for Redis data
+  kube-config: # Shared volume for Kubernetes configuration
+  redis-data: # Persistent volume for Redis data
 ```
 
 ## Reference Links
@@ -275,4 +277,4 @@ volumes:
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
 - [KIND Documentation](https://kind.sigs.k8s.io/)
-- [VNC Documentation](https://www.realvnc.com/en/connect/docs/) 
+- [VNC Documentation](https://www.realvnc.com/en/connect/docs/)

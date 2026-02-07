@@ -448,45 +448,49 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('examInfo').textContent = info;
     }
 
+    const PREP_TIMEOUT_MS = 6 * 60 * 1000; // 6 minutes
+
     async function pollExamStatus(examId) {
         const startTime = Date.now();
         const pollInterval = 1000; // Poll every 1 second
-        
+
         return new Promise((resolve, reject) => {
             const poll = async () => {
+                if (Date.now() - startTime > PREP_TIMEOUT_MS) {
+                    reject(new Error('Preparation is taking longer than expected (6 min). The Kubernetes cluster may still be starting. Check facilitator logs: docker compose logs -f facilitator jumphost k8s-api-server. You can retry starting the lab.'));
+                    return;
+                }
                 try {
                     const response = await fetch(`/facilitator/api/v1/exams/${examId}/status`);
                     const data = await response.json();
-                    
-                    // set warmup time in seconds
+
                     const warmUpTimeInSeconds = data.warmUpTimeInSeconds || 30;
 
                     if (data.status === 'READY') {
-                        // Set progress to 100% when ready
                         updateProgressBar(100);
                         updateLoadingMessage('Lab environment is ready! Redirecting...');
-                        // Wait a moment for the user to see the 100% progress
                         setTimeout(() => resolve(data), 1000);
                         return;
                     }
-                    
-                    // Calculate progress based on warm-up time
+
+                    if (data.status === 'PREPARATION_FAILED') {
+                        reject(new Error(data.message || 'Lab preparation failed. Check facilitator/jumphost logs (docker compose logs facilitator jumphost) and try again.'));
+                        return;
+                    }
+
                     const elapsedTime = (Date.now() - startTime) / 1000;
                     const progress = Math.min((elapsedTime / warmUpTimeInSeconds) * 100, 95);
                     updateProgressBar(progress);
                     updateLoadingMessage(data.message || 'Preparing lab environment...');
-                    
-                    // Continue polling
+
                     setTimeout(poll, pollInterval);
                 } catch (error) {
                     console.error('Error polling exam status:', error);
-                    // Show error in the loading overlay
                     updateLoadingMessage(`Error: ${error.message}. Retrying...`);
-                    // Continue polling despite errors
                     setTimeout(poll, pollInterval);
                 }
             };
-            
+
             poll();
         });
     }

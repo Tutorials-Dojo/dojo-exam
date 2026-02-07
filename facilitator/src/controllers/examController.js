@@ -264,12 +264,19 @@ async function getExamStatus(req, res) {
       });
     }
 
-    // Return the exam status and any additional info
+    const messages = {
+      READY: 'Exam environment is ready',
+      PREPARATION_FAILED: 'Lab preparation failed. Check Docker and facilitator/jumphost logs, then try again.',
+      PREPARING: 'Exam environment is being prepared',
+      CREATED: 'Exam environment is being prepared'
+    };
+    const message = messages[examStatus] || 'Exam environment is being prepared';
+
     return res.status(200).json({
       id: examId,
       status: examStatus || 'UNKNOWN',
       warmUpTimeInSeconds: examInfo.warmUpTimeInSeconds || 30,
-      message: examStatus === 'READY' ? 'Exam environment is ready' : 'Exam environment is being prepared'
+      message
     });
   } catch (error) {
     logger.error('Error retrieving exam status', { error: error.message });
